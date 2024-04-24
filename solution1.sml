@@ -54,12 +54,28 @@ fun solve (nil, s, s_c) = s_c
         end;
 
 
+(* A function to solve it in Linear time, not entirely linear since it has to find the element
+but it is much better than the previous solution. This takes at most N^2 but the previous one took N^3 *)
+fun min (x, y) = if x < y then x else y;
+fun abs x = if x < 0 then ~x else x;
+fun solvelinear (arr, len, i, j, s, s_c) = 
+    if i >= len then s_c else
+    if j >= len andalso s > s_c then s_c else
+    if s = s_c then 0 else
+    let
+        val abs_diff = abs (s - s_c);
+        val (i, ith) = if s < s_c then (i+1, List.nth(arr, i)) else (i, 0)
+        val (j, jth) = if s > s_c then (j+1, List.nth(arr, j)) else (j, 0)
+    in
+        min (abs_diff, solvelinear (arr, len, i, j, s+ith-jth, s_c-ith+jth))
+    end;
 
 
 fun fairseq fileName =
         let
             val (N, in_array) = parse fileName;
-            val solution = solve(in_array, sum in_array, 0)
+            (* val solution = solve(in_array, sum in_array, 0) *)
+            val solution2 = solvelinear(in_array, N, 0, 0, sum in_array, 0)
         in
-            print (Int.toString solution)
+            print (Int.toString solution2)
         end;
